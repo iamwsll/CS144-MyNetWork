@@ -1,5 +1,5 @@
 #include "byte_stream.hh"
-
+#include<iostream>
 using namespace std;
 
 ByteStream::ByteStream( uint64_t capacity )
@@ -67,10 +67,16 @@ void Reader::pop( uint64_t len )
 {
   // Your code here.
   uint64_t bytes_to_pop = std::min( len, static_cast<uint64_t>( buffer_.size() ) );
-
+/*std::cerr<<" i will read:";
+for(auto it = buffer_.begin();it!=buffer_.begin() + bytes_to_pop;it++)
+{
+  std::cerr<<*it;
+}
+std::cerr<<std::endl;*/
   buffer_.erase( buffer_.begin(), buffer_.begin() + bytes_to_pop );
 
   bytes_had_poped_ += bytes_to_pop;
+  //bytes_had_pushed_ -= bytes_to_pop;
 }
 
 uint64_t Reader::bytes_buffered() const
