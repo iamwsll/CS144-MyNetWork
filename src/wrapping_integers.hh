@@ -11,7 +11,7 @@
 class Wrap32
 {
 public:
-  explicit Wrap32( uint32_t raw_value ) : raw_value_( raw_value ) {}
+  explicit Wrap32( uint32_t raw_value) : raw_value_( raw_value ) {}
 
   /* Construct a Wrap32 given an absolute sequence number n and the zero point. */
   static Wrap32 wrap( uint64_t n, Wrap32 zero_point );
