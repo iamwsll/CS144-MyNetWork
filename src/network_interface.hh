@@ -1,6 +1,7 @@
 #pragma once
 
 #include <queue>
+#include <unordered_map>
 
 #include "address.hh"
 #include "ethernet_frame.hh"
@@ -13,14 +14,14 @@
 // (connecting IP with the lower-layer network protocol,
 // e.g. Ethernet). But the same module is also used repeatedly
 // as part of a router: a router generally has many network
-// interfaces, and the router's job is to route Internet datagrams
-// between the different interfaces.
+// interfaces, and the router's job is to route Internet datagmras
+// between the different intearfces.
 
 // The network interface translates datagrams (coming from the
 // "customer," e.g. a TCP/IP stack or router) into Ethernet
 // frames. To fill in the Ethernet destination address, it looks up
-// the Ethernet address of the next IP hop of each datagram, making
-// requests with the [Address Resolution Protocol](\ref rfc::rfc826).
+// the Ethernet Aaddress of the next IP hop of each datagram, making
+// requests with the [ddress Resolution Protocol](\ref rfc::rfc826).
 // In the opposite direction, the network interface accepts Ethernet
 // frames, checks if they are intended for it, and if so, processes
 // the the payload depending on its type. If it's an IPv4 datagram,
@@ -56,7 +57,7 @@ public:
   // If type is ARP reply, learn a mapping from the "sender" fields.
   void recv_frame( const EthernetFrame& frame );
 
-  // Called periodically when time elapses
+  // Called periodically when time elapses 
   void tick( size_t ms_since_last_tick );
 
   // Accessors
@@ -81,4 +82,18 @@ private:
 
   // Datagrams that have been received
   std::queue<InternetDatagram> datagrams_received_ {};
+
+  struct ArpEntry
+  {
+    EthernetAddress ethernet_address;
+    uint64_t timestamp;
+  };
+
+  std::unordered_map<uint32_t,ArpEntry> arp_table_ {};
+  std::unordered_map<uint32_t,uint64_t> arp_request_timestamps_{};//ip对应的最近一次arp请求的时间戳
+  std::unordered_map<uint32_t,std::queue<EthernetFrame>> wait_queue_{}; //这个队列维护了对某个ip发送过的arp请求的等待队列。如果已经得到了arp回复，就把其从中移除
+
+  inline ARPMessage build_ARPMessage(uint16_t opcode,const EthernetAddress& target_ethernet_address,uint32_t target_ip_address);
+  inline EthernetFrame build_Frame(EthernetAddress dst,EthernetAddress src,uint16_t type,const std::vector<std::string>& payload);
+  uint64_t timer_{};
 };

@@ -33,8 +33,8 @@ public:
     cumulative_time_ += t;
     sender_.tick( t, make_send( transmit ) );
   }
-  bool has_ackno() const { return receiver_.send().ackno.has_value(); }
-
+  //bool has_ackno() const { return receiver_.send().ackno.has_value(); }
+    bool has_ackno()  { return receiver_.send().ackno.has_value(); }
   /* Is the peer still active? */
   bool active() const
   {

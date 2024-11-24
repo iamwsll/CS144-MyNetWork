@@ -29,7 +29,7 @@ void TCPReceiver::receive( TCPSenderMessage message )
   return;
 }
 
-TCPReceiverMessage TCPReceiver::send()
+TCPReceiverMessage TCPReceiver::send() 
 {
   // if(reassembler_.writer().is_closed())
   // {
