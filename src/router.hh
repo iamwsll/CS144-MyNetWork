@@ -6,6 +6,14 @@
 #include "exception.hh"
 #include "network_interface.hh"
 
+struct RouteEntry
+{
+  uint32_t prefix;
+  uint8_t prefix_length;
+  std::optional<Address> next_hop;
+  size_t interface_num;
+};
+
 // \brief A router that has multiple network interfaces and
 // performs longest-prefix-match routing between them.
 class Router
@@ -33,6 +41,14 @@ public:
   void route();
 
 private:
-  // The router's collection of network interfaces
   std::vector<std::shared_ptr<NetworkInterface>> _interfaces {};
+  struct TrieNode
+  {
+    std::unique_ptr<TrieNode> child[2]{};
+    std::optional<RouteEntry> route_info{};
+  };
+  TrieNode _root{};
+
+  void insert_route( const RouteEntry& entry );
+  std::optional<RouteEntry> find_longest_prefix_match( uint32_t dst ) const;
 };
